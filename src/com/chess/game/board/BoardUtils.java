@@ -5,12 +5,14 @@ import javafx.util.Pair;
 public final class BoardUtils {
     public static final int BOARD_ROWS = 8;
     public static final int BOARD_COLUMNS = 8;
+    public static final int NUMBER_OF_BOARD_TILES = 64;
 
     private BoardUtils() {
         throw new RuntimeException("You can create me!");
     }
 
-    public static Pair<Integer, Integer> getPieceRowAndColumnCoordinates(final int pieceCoordinate) {
+    public static Pair<Integer, Integer> getPieceRowAndColumnCoordinates(int pieceCoordinate) {
+        pieceCoordinate++;
         int pieceRow = pieceCoordinate / BoardUtils.BOARD_COLUMNS;
         int pieceColumn = pieceCoordinate % BoardUtils.BOARD_COLUMNS;
         if (pieceColumn == 0) {

@@ -21,7 +21,7 @@ public final class Bishop extends Piece {
     @Override
     public List<Move> calculateLegalMoves(Board board) {
         final List<Move> legalMoves = new ArrayList<>();
-        final Pair<Integer, Integer> pieceRowAndColumnCoordinates = BoardUtils.getPieceRowAndColumnCoordinates(this.piecePosition);
+        final Pair<Integer, Integer> pieceRowAndColumnCoordinates = BoardUtils.getPieceRowAndColumnCoordinates(this.getPiecePosition());
         for (int i = 0; i < 4; i++) {
             int pieceRowCandidate = pieceRowAndColumnCoordinates.getKey() + ROW_OFFSETS[i];
             int pieceColumnCandidate = pieceRowAndColumnCoordinates.getValue() + COLUMN_OFFSETS[i];
@@ -31,7 +31,7 @@ public final class Bishop extends Piece {
                     legalMoves.add(new Move.NormalMove(pieceCoordinateCandidate, this));
                 } else {
                     final Piece attackingPiece = board.getTile(pieceCoordinateCandidate).getPiece();
-                    if (this.pieceAlliance != attackingPiece.pieceAlliance) {
+                    if (this.getPieceAlliance() != attackingPiece.getPieceAlliance()) {
                         legalMoves.add(new Move.AttackingMove(pieceCoordinateCandidate, this, attackingPiece));
                     } else {
                         break;
@@ -42,5 +42,10 @@ public final class Bishop extends Piece {
             }
         }
         return Collections.unmodifiableList(legalMoves);
+    }
+
+    @Override
+    public PieceType getPieceType() {
+        return PieceType.BISHOP;
     }
 }
