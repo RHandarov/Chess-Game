@@ -3,7 +3,7 @@ package com.chess.game.pieces;
 import com.chess.game.Alliance;
 import com.chess.game.board.Board;
 import com.chess.game.board.BoardUtils;
-import com.chess.game.board.Move;
+import com.chess.game.player.Move;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
@@ -49,17 +49,19 @@ public final class Pawn extends Piece {
                         legalMoves.add(new Move.NormalMove(pieceCoordinateCandidate, this));
                     }
                 }
-            } else {
-                final int pieceRowCandidate = pieceRowAndColumnCoordinates.getKey() + ROW_OFFSETS[i];
-                final int pieceColumnCandidate = pieceRowAndColumnCoordinates.getValue() + COLUMN_OFFSETS[i];
-                if (BoardUtils.isValidTile(pieceRowAndColumnCoordinates)) {
-                    final int pieceCoordinateCandidate = BoardUtils.getPieceCoordinate(new Pair<Integer, Integer>(pieceRowCandidate, pieceColumnCandidate));
-                    if (board.getTile(pieceCoordinateCandidate).isTileOccupied()) {
-                        Piece attackingPiece = board.getTile(pieceCoordinateCandidate).getPiece();
-                        legalMoves.add(new Move.AttackingMove(pieceCoordinateCandidate, this, attackingPiece));
-                    }
-                }
             }
+            //TODO: fix take legal moves
+//            else {
+//                final int pieceRowCandidate = pieceRowAndColumnCoordinates.getKey() + ROW_OFFSETS[i];
+//                final int pieceColumnCandidate = pieceRowAndColumnCoordinates.getValue() + COLUMN_OFFSETS[i];
+//                if (BoardUtils.isValidTile(pieceRowAndColumnCoordinates)) {
+//                    final int pieceCoordinateCandidate = BoardUtils.getPieceCoordinate(new Pair<Integer, Integer>(pieceRowCandidate, pieceColumnCandidate));
+//                    if (board.getTile(pieceCoordinateCandidate).isTileOccupied()) {
+//                        Piece attackingPiece = board.getTile(pieceCoordinateCandidate).getPiece();
+//                        legalMoves.add(new Move.AttackingMove(pieceCoordinateCandidate, this, attackingPiece));
+//                    }
+//                }
+//            }
         }
         return Collections.unmodifiableList(legalMoves);
     }

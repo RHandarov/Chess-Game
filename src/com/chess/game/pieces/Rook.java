@@ -3,7 +3,7 @@ package com.chess.game.pieces;
 import com.chess.game.Alliance;
 import com.chess.game.board.Board;
 import com.chess.game.board.BoardUtils;
-import com.chess.game.board.Move;
+import com.chess.game.player.Move;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
