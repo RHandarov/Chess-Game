@@ -55,7 +55,9 @@ public abstract class Piece {
             return false;
         }
         Piece piece = (Piece)other;
-        return this.getPieceAlliance() == piece.getPieceAlliance() && this.getPieceType() == piece.getPieceType();
+        return this.getPieceAlliance() == piece.getPieceAlliance() &&
+                this.getPieceType() == piece.getPieceType() &&
+                this.piecePosition == piece.getPiecePosition();
     }
 
     @Override

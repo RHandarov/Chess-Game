@@ -1,6 +1,7 @@
 package com.chess.game.board;
 
 import com.chess.game.Alliance;
+import com.chess.game.Utiles;
 import com.chess.game.pieces.*;
 import com.chess.game.player.BlackPlayer;
 import com.chess.game.player.Move;
@@ -9,6 +10,8 @@ import com.chess.game.player.WhitePlayer;
 import javafx.util.Pair;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class Board {
     private final List<Tile> gameBoard;
@@ -41,6 +44,10 @@ public final class Board {
 
     private List<Piece> getActivePieces(final Alliance pieceAlliance) {
         return pieceAlliance == Alliance.WHITE ? this.whitePieces : this.blackPieces;
+    }
+
+    public List<Tile> getTiles() {
+        return this.gameBoard;
     }
 
     private List<Move> calculateLegalMoves(final Alliance pieceAlliance) {
@@ -76,6 +83,10 @@ public final class Board {
         return this.currentPlayer;
     }
 
+    public List<Move> getAllLegalMoves() {
+        return Stream.concat(this.whitePlayer.getLegalMoves().stream(), this.blackPlayer.getLegalMoves().stream()).collect(Collectors.toList());
+    }
+
     private Board(final Builder builder) {
         this.gameBoard = Board.createBoardTiles(builder);
         this.whitePieces = this.calculatePieces(Alliance.WHITE);
@@ -84,8 +95,7 @@ public final class Board {
         final List<Move> blackLegalMoves = this.calculateLegalMoves(Alliance.BLACK);
         this.whitePlayer = new WhitePlayer(this, whiteLegalMoves, blackLegalMoves);
         this.blackPlayer = new BlackPlayer(this, blackLegalMoves, whiteLegalMoves);
-        //TODO: fix it
-        this.currentPlayer = null;
+        this.currentPlayer = builder.nextMoveMaker == Alliance.WHITE ? this.whitePlayer : this.blackPlayer;
     }
 
     public static Board createStandardBoard() {
@@ -94,8 +104,8 @@ public final class Board {
         builder.setPiece(0, new Rook(0, Alliance.BLACK));
         builder.setPiece(1, new Knight(1, Alliance.BLACK));
         builder.setPiece(2, new Bishop(2, Alliance.BLACK));
-        builder.setPiece(3, new King(3, Alliance.BLACK));
-        builder.setPiece(4, new Queen(4, Alliance.BLACK));
+        builder.setPiece(3, new Queen(3, Alliance.BLACK));
+        builder.setPiece(4, new King(4, Alliance.BLACK));
         builder.setPiece(5, new Bishop(5, Alliance.BLACK));
         builder.setPiece(6, new Knight(6, Alliance.BLACK));
         builder.setPiece(7, new Rook(7, Alliance.BLACK));
@@ -119,11 +129,12 @@ public final class Board {
         builder.setPiece(56, new Rook(56, Alliance.WHITE));
         builder.setPiece(57, new Knight(57, Alliance.WHITE));
         builder.setPiece(58, new Bishop(58, Alliance.WHITE));
-        builder.setPiece(59, new King(59, Alliance.WHITE));
-        builder.setPiece(60, new Queen(60, Alliance.WHITE));
+        builder.setPiece(59, new Queen(59, Alliance.WHITE));
+        builder.setPiece(60, new King(60, Alliance.WHITE));
         builder.setPiece(61, new Bishop(61, Alliance.WHITE));
         builder.setPiece(62, new Knight(62, Alliance.WHITE));
         builder.setPiece(63, new Rook(63, Alliance.WHITE));
+        builder.setNextMoveMaker(Alliance.WHITE);
         return builder.build();
     }
 
@@ -145,13 +156,19 @@ public final class Board {
 
     public static final class Builder {
         private final Map<Integer, Piece> boardConfig;
+        private Alliance nextMoveMaker;
 
         public Builder() {
             this.boardConfig = new HashMap<>();
+            this.nextMoveMaker = null;
         }
 
         public void setPiece(final int piecePosition, final Piece piece) {
             this.boardConfig.put(piecePosition, piece);
+        }
+
+        public void setNextMoveMaker(final Alliance nextMoveMakerAlliance) {
+            this.nextMoveMaker = nextMoveMakerAlliance;
         }
 
         public Piece getPiece(final int piecePosition) {
@@ -162,6 +179,9 @@ public final class Board {
         }
 
         public Board build() {
+            if (this.nextMoveMaker == null) {
+                throw new RuntimeException("Next player must be set!");
+            }
             return new Board(this);
         }
     }
