@@ -33,9 +33,8 @@ public final class Queen extends Piece {
                     final Piece attackingPiece = board.getTile(pieceCoordinateCandidate).getPiece();
                     if (this.getPieceAlliance() != attackingPiece.getPieceAlliance()) {
                         legalMoves.add(new Move.AttackingMove(pieceCoordinateCandidate, this, attackingPiece));
-                    } else {
-                        break;
                     }
+                    break;
                 }
                 pieceRowCandidate += ROW_OFFSETS[i];
                 pieceColumnCandidate += COLUMN_OFFSETS[i];

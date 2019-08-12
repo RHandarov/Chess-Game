@@ -137,6 +137,9 @@ public final class Table {
                             Table.this.movedPiece = Table.this.sourceTile.getPiece();
                             if (Table.this.movedPiece == null) {
                                 Table.this.sourceTile = null;
+                            } else if (Table.this.movedPiece.getPieceAlliance() != Table.this.board.getCurrentPlayer().getAlliance()) {
+                                Table.this.sourceTile = null;
+                                Table.this.movedPiece = null;
                             }
                         } else {
                             Table.this.destinationTile = Table.this.board.getTile(TilePanel.this.tileId);

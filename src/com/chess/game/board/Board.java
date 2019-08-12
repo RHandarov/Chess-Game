@@ -1,7 +1,6 @@
 package com.chess.game.board;
 
 import com.chess.game.Alliance;
-import com.chess.game.Utiles;
 import com.chess.game.pieces.*;
 import com.chess.game.player.BlackPlayer;
 import com.chess.game.player.Move;

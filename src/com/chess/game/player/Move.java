@@ -2,11 +2,10 @@ package com.chess.game.player;
 
 import com.chess.game.board.Board;
 import com.chess.game.pieces.Piece;
-import com.sun.corba.se.impl.interceptors.SlotTableStack;
 
 import java.util.List;
 
-import static com.chess.game.board.Board.*;
+import static com.chess.game.board.Board.Builder;
 
 public abstract class Move {
     protected final int newPieceCoordinate;

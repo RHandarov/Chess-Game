@@ -35,6 +35,6 @@ public final class BoardUtils {
     }
 
     public static boolean isValidTile(final int pieceCoordinate) {
-        return pieceCoordinate >+ 0 && pieceCoordinate <= 63;
+        return pieceCoordinate >= 0 && pieceCoordinate <= 63;
     }
 }

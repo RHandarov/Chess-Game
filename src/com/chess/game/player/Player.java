@@ -64,7 +64,8 @@ public abstract class Player {
         }
         Board transitionBoard = move.execute(this.board);
         Player currentPlayer = transitionBoard.getCurrentPlayer().getOpponent();
-        if (currentPlayer.isTileAttacked(currentPlayer.getOpponent().getKing().getPiecePosition(), currentPlayer.getLegalMoves())) {
+        //TODO: fix it
+        if (currentPlayer.isTileAttacked(currentPlayer.getKing().getPiecePosition(), currentPlayer.getOpponent().getLegalMoves())) {
             return new MoveTransition(this.board, move, MoveStatus.LEAVE_PLAYER_IN_CHECK);
         }
         return new MoveTransition(transitionBoard, move, MoveStatus.DONE);
