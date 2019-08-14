@@ -53,6 +53,12 @@ public final class Table {
         this.gameBoard.setVisible(true);
     }
 
+    private void clear() {
+        this.boardDirection = BoardDirection.NORMAL;
+        this.board = Board.createStandardBoard();
+        this.boardPanel.drawBoard();
+    }
+
     private void populateMenu(final JMenuBar menuBar) {
         final JMenu fileMenu = new JMenu("File");
         this.populateFileMenu(fileMenu);
@@ -75,14 +81,15 @@ public final class Table {
     }
 
     private void populateFileMenu(final JMenu fileMenu) {
-        final JMenuItem openPgnFileItem = new JMenuItem("Open PGN file");
-        openPgnFileItem.addActionListener(new ActionListener() {
+        final JMenuItem newGameItem = new JMenuItem("New game");
+        newGameItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Ope the PGN file up!");
+                Table.this.clear();
             }
         });
-        fileMenu.add(openPgnFileItem);
+        fileMenu.add(newGameItem);
+        fileMenu.addSeparator();
         final JMenuItem exitItem = new JMenuItem("Exit");
         exitItem.addActionListener(new ActionListener() {
             @Override

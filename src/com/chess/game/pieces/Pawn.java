@@ -15,23 +15,22 @@ import java.util.List;
 public final class Pawn extends Piece {
     private static final int[] ROW_OFFSETS = {1, 2, 1, 1};
     private static final int[] COLUMN_OFFSETS = {0, 0, 1, -1};
+    private final boolean isFirstMove;
 
-    public Pawn(int piecePosition, Alliance pieceAlliance) {
+    public Pawn(final int piecePosition, final Alliance pieceAlliance, final boolean isFirstMove) {
         super(piecePosition, pieceAlliance);
+        this.isFirstMove = isFirstMove;
+    }
+
+    public Pawn(final int piecePosition, final Alliance pieceAlliance) {
+        super(piecePosition, pieceAlliance);
+        this.isFirstMove = false;
     }
 
     @Override
     public List<Move> calculateLegalMoves(Board board) {
         final List<Move> legalMoves = new ArrayList<>();
         final Pair<Integer, Integer> pieceRowAndColumnCoordinates = BoardUtils.getPieceRowAndColumnCoordinates(this.getPiecePosition());
-        final boolean canMakeJump;
-        if (this.getPieceAlliance() == Alliance.WHITE && pieceRowAndColumnCoordinates.getKey() == 7) {
-            canMakeJump = true;
-        } else if (this.getPieceAlliance() == Alliance.BLACK && pieceRowAndColumnCoordinates.getKey() == 2) {
-            canMakeJump = true;
-        } else {
-            canMakeJump = false;
-        }
         for (int i = 0; i < 4; i++) {
             if (i == 0) {
                 final int pieceRowCandidate = pieceRowAndColumnCoordinates.getKey() + (ROW_OFFSETS[i] * this.getPieceAlliance().getDirection());
@@ -42,7 +41,7 @@ public final class Pawn extends Piece {
                         legalMoves.add(new NormalMove(pieceCoordinateCandidate, this));
                     }
                 }
-            } else if (i == 1 && canMakeJump) {
+            } else if (i == 1 && this.isFirstMove) {
                 final int pieceRowCandidate = pieceRowAndColumnCoordinates.getKey() + (ROW_OFFSETS[i] * this.getPieceAlliance().getDirection());
                 final int pieceColumnCandidate = pieceRowAndColumnCoordinates.getValue() + COLUMN_OFFSETS[i];
                 if (BoardUtils.isValidTile(new Pair<Integer, Integer>(pieceRowCandidate, pieceColumnCandidate))) {
@@ -51,8 +50,7 @@ public final class Pawn extends Piece {
                         legalMoves.add(new NormalMove(pieceCoordinateCandidate, this));
                     }
                 }
-            }
-            else {
+            } else if (i > 1) {
                 final int pieceRowCandidate = pieceRowAndColumnCoordinates.getKey() + (ROW_OFFSETS[i] * this.getPieceAlliance().getDirection());
                 final int pieceColumnCandidate = pieceRowAndColumnCoordinates.getValue() + (COLUMN_OFFSETS[i] * this.getPieceAlliance().getDirection());
                 if (BoardUtils.isValidTile(new Pair<Integer, Integer>(pieceRowCandidate, pieceColumnCandidate))) {
