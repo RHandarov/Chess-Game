@@ -47,4 +47,9 @@ public final class Queen extends Piece {
     public PieceType getPieceType() {
         return PieceType.QUEEN;
     }
+
+    @Override
+    public int getPieceValue() {
+        return 900;
+    }
 }

@@ -47,4 +47,9 @@ public final class Rook extends Piece {
     public PieceType getPieceType() {
         return PieceType.ROOK;
     }
+
+    @Override
+    public int getPieceValue() {
+        return 500;
+    }
 }

@@ -77,6 +77,10 @@ public abstract class Move {
             builder.setNextMoveMaker(board.getCurrentPlayer().getOpponent().getAlliance());
             return builder.build();
         }
+
+        public Piece getAttackingPiece() {
+            return this.attackingPiece;
+        }
     }
 
     public static final class NullMove extends Move {

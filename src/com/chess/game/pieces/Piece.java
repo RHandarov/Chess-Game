@@ -65,4 +65,6 @@ public abstract class Piece {
         String pieceLetter = this.getPieceType().toString();
         return this.getPieceAlliance() == Alliance.BLACK ? pieceLetter.toUpperCase() : pieceLetter.toLowerCase();
     }
+
+    public abstract int getPieceValue();
 }

@@ -4,5 +4,5 @@ import com.chess.game.board.Board;
 import com.chess.game.player.Move;
 
 public interface MoveStrategy {
-    Move execute(Board board, int depth);
+    Move execute(Board board);
 }

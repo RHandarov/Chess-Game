@@ -69,4 +69,9 @@ public final class Pawn extends Piece {
     public PieceType getPieceType() {
         return PieceType.PAWN;
     }
+
+    @Override
+    public int getPieceValue() {
+        return 100;
+    }
 }

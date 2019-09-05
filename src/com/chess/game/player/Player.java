@@ -5,6 +5,7 @@ import com.chess.game.board.Board;
 import com.chess.game.pieces.King;
 import com.chess.game.pieces.Piece;
 import com.chess.game.pieces.PieceType;
+import com.chess.game.player.Move.AttackingMove;
 
 import java.util.List;
 
@@ -21,7 +22,8 @@ public abstract class Player {
                 return (King)piece;
             }
         }
-        throw new RuntimeException("You must not reach here! The game board is invalid!");
+        return null;
+        //throw new RuntimeException("You must not reach here! The game board is invalid!");
     }
 
     private boolean isTileAttacked(final int tilePosition, final List<Move> opponentLegalMoves) {
@@ -31,6 +33,10 @@ public abstract class Player {
             }
         }
         return false;
+    }
+
+    public boolean isCastled() {
+        return this.king.isCastled();
     }
 
     public Player(final Board board, final List<Move> legalMoves, final List<Move> opponentLegalMoves) {
@@ -61,6 +67,12 @@ public abstract class Player {
     public MoveTransition makeMove(final Move move) {
         if (!this.isLegalMove(move)) {
             return new MoveTransition(this.board, move, MoveStatus.ILLEGAL_MOVE);
+        }
+        if (move instanceof AttackingMove) {
+            final AttackingMove attackingMove = (AttackingMove)move;
+            if (attackingMove.getAttackingPiece().getPieceType() == PieceType.KING) {
+                return new MoveTransition(this.board, move, MoveStatus.ILLEGAL_MOVE);
+            }
         }
         Board transitionBoard = move.execute(this.board);
         Player currentPlayer = transitionBoard.getCurrentPlayer().getOpponent();

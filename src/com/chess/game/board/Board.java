@@ -104,7 +104,7 @@ public final class Board {
         builder.setPiece(1, new Knight(1, Alliance.BLACK));
         builder.setPiece(2, new Bishop(2, Alliance.BLACK));
         builder.setPiece(3, new Queen(3, Alliance.BLACK));
-        builder.setPiece(4, new King(4, Alliance.BLACK));
+        builder.setPiece(4, new King(4, Alliance.BLACK, true));
         builder.setPiece(5, new Bishop(5, Alliance.BLACK));
         builder.setPiece(6, new Knight(6, Alliance.BLACK));
         builder.setPiece(7, new Rook(7, Alliance.BLACK));
@@ -129,7 +129,7 @@ public final class Board {
         builder.setPiece(57, new Knight(57, Alliance.WHITE));
         builder.setPiece(58, new Bishop(58, Alliance.WHITE));
         builder.setPiece(59, new Queen(59, Alliance.WHITE));
-        builder.setPiece(60, new King(60, Alliance.WHITE));
+        builder.setPiece(60, new King(60, Alliance.WHITE, true));
         builder.setPiece(61, new Bishop(61, Alliance.WHITE));
         builder.setPiece(62, new Knight(62, Alliance.WHITE));
         builder.setPiece(63, new Rook(63, Alliance.WHITE));

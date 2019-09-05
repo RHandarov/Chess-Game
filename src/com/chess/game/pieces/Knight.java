@@ -44,4 +44,9 @@ public final class Knight extends Piece {
     public PieceType getPieceType() {
         return PieceType.KNIGHT;
     }
+
+    @Override
+    public int getPieceValue() {
+        return 320;
+    }
 }

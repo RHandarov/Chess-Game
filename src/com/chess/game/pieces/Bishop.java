@@ -47,4 +47,9 @@ public final class Bishop extends Piece {
     public PieceType getPieceType() {
         return PieceType.BISHOP;
     }
+
+    @Override
+    public int getPieceValue() {
+        return 350;
+    }
 }

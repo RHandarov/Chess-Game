@@ -14,8 +14,20 @@ public final class King extends Piece {
     private static final int[] ROW_OFFSETS = {0, 0, -1, 1, -1, -1, 1, 1};
     private static final int[] COLUMN_OFFSETS = {-1, 1, 0, 0, -1, 1, -1, 1};
 
-    public King(int piecePosition, Alliance pieceAlliance) {
+    private final boolean isCastled;
+
+    public King(final int piecePosition, final Alliance pieceAlliance) {
         super(piecePosition, pieceAlliance);
+        this.isCastled = false;
+    }
+
+    public King(final int piecePosition, final Alliance pieceAlliance, final boolean isCastled) {
+        super(piecePosition, pieceAlliance);
+        this.isCastled = isCastled;
+    }
+
+    public boolean isCastled() {
+        return this.isCastled;
     }
 
     @Override
@@ -43,5 +55,10 @@ public final class King extends Piece {
     @Override
     public PieceType getPieceType() {
         return PieceType.KING;
+    }
+
+    @Override
+    public int getPieceValue() {
+        return 20000;
     }
 }
