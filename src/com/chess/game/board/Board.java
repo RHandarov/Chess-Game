@@ -19,6 +19,7 @@ public final class Board {
     private final WhitePlayer whitePlayer;
     private final BlackPlayer blackPlayer;
     private final Player currentPlayer;
+    private final Pawn enPassantPawn;
 
     private static List<Tile> createBoardTiles(final Builder builder) {
         List<Tile> tiles = new ArrayList<>();
@@ -90,11 +91,16 @@ public final class Board {
         this.gameBoard = Board.createBoardTiles(builder);
         this.whitePieces = this.calculatePieces(Alliance.WHITE);
         this.blackPieces = this.calculatePieces(Alliance.BLACK);
+        this.enPassantPawn = builder.enPassantPawn;
         final List<Move> whiteLegalMoves = this.calculateLegalMoves(Alliance.WHITE);
         final List<Move> blackLegalMoves = this.calculateLegalMoves(Alliance.BLACK);
         this.whitePlayer = new WhitePlayer(this, whiteLegalMoves, blackLegalMoves);
         this.blackPlayer = new BlackPlayer(this, blackLegalMoves, whiteLegalMoves);
         this.currentPlayer = builder.nextMoveMaker == Alliance.WHITE ? this.whitePlayer : this.blackPlayer;
+    }
+
+    public Pawn getEnPassantPawn() {
+        return this.enPassantPawn;
     }
 
     public static Board createStandardBoard() {
@@ -156,6 +162,7 @@ public final class Board {
     public static final class Builder {
         private final Map<Integer, Piece> boardConfig;
         private Alliance nextMoveMaker;
+        private Pawn enPassantPawn;
 
         public Builder() {
             this.boardConfig = new HashMap<>();
@@ -175,6 +182,10 @@ public final class Board {
                 return this.boardConfig.get(piecePosition);
             }
             return null;
+        }
+
+        public void setEnPassantPawn(final Pawn enPassantPawn) {
+            this.enPassantPawn = enPassantPawn;
         }
 
         public Board build() {

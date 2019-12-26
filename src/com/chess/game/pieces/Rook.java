@@ -4,6 +4,8 @@ import com.chess.game.Alliance;
 import com.chess.game.board.Board;
 import com.chess.game.board.BoardUtils;
 import com.chess.game.player.Move;
+import com.chess.game.player.Move.AttackingMove;
+import com.chess.game.player.Move.NormalMove;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
@@ -28,11 +30,11 @@ public final class Rook extends Piece {
             while (BoardUtils.isValidTile(new Pair<Integer, Integer>(pieceRowCandidate, pieceColumnCandidate))) {
                 final int pieceCoordinateCandidate = BoardUtils.getPieceCoordinate(new Pair<Integer, Integer>(pieceRowCandidate, pieceColumnCandidate));
                 if (!board.getTile(pieceCoordinateCandidate).isTileOccupied()) {
-                    legalMoves.add(new Move.NormalMove(pieceCoordinateCandidate, this));
+                    legalMoves.add(new NormalMove(pieceCoordinateCandidate, this));
                 } else {
                     final Piece attackingPiece = board.getTile(pieceCoordinateCandidate).getPiece();
                     if (this.getPieceAlliance() != attackingPiece.getPieceAlliance()) {
-                        legalMoves.add(new Move.AttackingMove(pieceCoordinateCandidate, this, attackingPiece));
+                        legalMoves.add(new AttackingMove(pieceCoordinateCandidate, this, attackingPiece));
                     }
                     break;
                 }

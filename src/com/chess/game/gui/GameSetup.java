@@ -10,7 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class GameSetup extends JDialog {
-    private PlayerType whitePlayerType;
     private PlayerType blackPlayerType;
 
     private static final String HUMAN_TEXT = "Hunam";
@@ -25,20 +24,12 @@ public class GameSetup extends JDialog {
         final JRadioButton blackHumanButton = new JRadioButton(HUMAN_TEXT);
         final JRadioButton blackComputerButton = new JRadioButton(COMPUTER_TEXT);
 
-        final ButtonGroup whiteGroup = new ButtonGroup();
-        whiteGroup.add(whiteHumanButton);
-        whiteGroup.add(whiteComputerButton);
-        whiteHumanButton.setSelected(true);
-
         final ButtonGroup blackGroup = new ButtonGroup();
         blackGroup.add(blackHumanButton);
         blackGroup.add(blackComputerButton);
         blackHumanButton.setSelected(true);
 
         this.getContentPane().add(myPanel);
-        myPanel.add(new JLabel("White"));
-        myPanel.add(whiteHumanButton);
-        myPanel.add(whiteComputerButton);
         myPanel.add(new JLabel("Black"));
         myPanel.add(blackHumanButton);
         myPanel.add(blackComputerButton);
@@ -49,7 +40,6 @@ public class GameSetup extends JDialog {
         okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                whitePlayerType = whiteHumanButton.isSelected() ? PlayerType.HUMAN : PlayerType.COMPUTER;
                 blackPlayerType = blackHumanButton.isSelected() ? PlayerType.HUMAN : PlayerType.COMPUTER;
                 GameSetup.this.setVisible(false);
             }
@@ -58,7 +48,6 @@ public class GameSetup extends JDialog {
         cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Cancel");
                 GameSetup.this.setVisible(false);
             }
         });
@@ -78,7 +67,7 @@ public class GameSetup extends JDialog {
 
     boolean isAIPlayer(final Player player) {
         if (player.getAlliance() == Alliance.WHITE) {
-            return this.whitePlayerType == PlayerType.COMPUTER;
+            return false;
         }
         return this.blackPlayerType == PlayerType.COMPUTER;
     }

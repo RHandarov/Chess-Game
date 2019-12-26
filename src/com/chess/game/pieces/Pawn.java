@@ -6,6 +6,8 @@ import com.chess.game.board.BoardUtils;
 import com.chess.game.player.Move;
 import com.chess.game.player.Move.AttackingMove;
 import com.chess.game.player.Move.NormalMove;
+import com.chess.game.player.Move.PawnEnPassantAttackMove;
+import com.chess.game.player.Move.PawnJump;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
@@ -47,17 +49,26 @@ public final class Pawn extends Piece {
                 if (BoardUtils.isValidTile(new Pair<Integer, Integer>(pieceRowCandidate, pieceColumnCandidate))) {
                     final int pieceCoordinateCandidate = BoardUtils.getPieceCoordinate(new Pair<Integer, Integer>(pieceRowCandidate, pieceColumnCandidate));
                     if (!board.getTile(pieceCoordinateCandidate).isTileOccupied()) {
-                        legalMoves.add(new NormalMove(pieceCoordinateCandidate, this));
+                        legalMoves.add(new PawnJump(pieceCoordinateCandidate, this));
                     }
                 }
             } else if (i > 1) {
                 final int pieceRowCandidate = pieceRowAndColumnCoordinates.getKey() + (ROW_OFFSETS[i] * this.getPieceAlliance().getDirection());
                 final int pieceColumnCandidate = pieceRowAndColumnCoordinates.getValue() + (COLUMN_OFFSETS[i] * this.getPieceAlliance().getDirection());
                 if (BoardUtils.isValidTile(new Pair<Integer, Integer>(pieceRowCandidate, pieceColumnCandidate))) {
+                    Pawn testPawn = board.getEnPassantPawn();
                     final int pieceCoordinateCandidate = BoardUtils.getPieceCoordinate(new Pair<Integer, Integer>(pieceRowCandidate, pieceColumnCandidate));
                     if (board.getTile(pieceCoordinateCandidate).isTileOccupied()) {
                         Piece attackingPiece = board.getTile(pieceCoordinateCandidate).getPiece();
                         legalMoves.add(new AttackingMove(pieceCoordinateCandidate, this, attackingPiece));
+                    } else if (board.getEnPassantPawn() != null) {
+                        final Pawn pawnOnCandidate = board.getEnPassantPawn();
+                        final int rowOnCandidate = pieceRowCandidate + (ROW_OFFSETS[0] * this.getPieceAlliance().getDirection() * -1);
+                        final int colOnCandidate = pieceColumnCandidate + COLUMN_OFFSETS[0];
+                        final int newPieceId = BoardUtils.getPieceCoordinate(new Pair<>(rowOnCandidate, colOnCandidate));
+                        if (pawnOnCandidate.getPiecePosition() == newPieceId) {
+                            legalMoves.add(new PawnEnPassantAttackMove(pieceCoordinateCandidate, this, pawnOnCandidate));
+                        }
                     }
                 }
             }

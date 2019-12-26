@@ -5,6 +5,7 @@ import com.chess.game.board.BoardUtils;
 import com.chess.game.board.Tile;
 import com.chess.game.pieces.Piece;
 import com.chess.game.player.Move;
+import com.chess.game.player.Move.MoveFactory;
 import com.chess.game.player.MoveStatus;
 import com.chess.game.player.MoveTransition;
 import com.chess.game.player.ai.MiniMax;
@@ -34,6 +35,9 @@ public final class Table extends Observable {
     private final JFrame gameBoard;
     private final BoardPanel boardPanel;
     private final GameSetup gameSetup;
+    private final TakenPiecesPanel takenPiecesPanel;
+    private final MoveLog moveLog;
+
     private Board board;
     private BoardDirection boardDirection;
     private Tile sourceTile;
@@ -55,9 +59,12 @@ public final class Table extends Observable {
         this.gameBoard.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.boardDirection = BoardDirection.NORMAL;
         this.board = Board.createStandardBoard();
+        this.takenPiecesPanel = new TakenPiecesPanel();
         this.boardPanel = new BoardPanel();
+        this.moveLog = new MoveLog();
         this.gameSetup = new GameSetup(this.gameBoard, true);
         this.addObserver(new TableGameAIWatcher());
+        this.gameBoard.add(this.takenPiecesPanel, BorderLayout.WEST);
         this.gameBoard.add(this.boardPanel, BorderLayout.CENTER);
         final JMenuBar menuBar = new JMenuBar();
         this.populateMenu(menuBar);
@@ -80,6 +87,8 @@ public final class Table extends Observable {
     private void clear() {
         this.boardDirection = BoardDirection.NORMAL;
         this.board = Board.createStandardBoard();
+        this.takenPiecesPanel.clear();
+        this.moveLog.clear();
         this.boardPanel.drawBoard();
     }
 
@@ -131,8 +140,9 @@ public final class Table extends Observable {
         gameSetupItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Table.get().getGameSetup().promptUser();
-                Table.get().setupUpdate(Table.get().getGameSetup());
+                Table.this.getGameSetup().promptUser();
+                Table.this.setupUpdate(Table.get().getGameSetup());
+                Table.get().clear();
             }
         });
         optionsMenu.add(gameSetupItem);
@@ -157,6 +167,38 @@ public final class Table extends Observable {
         return this.boardPanel;
     }
 
+    public static class MoveLog {
+        private final List<Move> moves;
+
+        public MoveLog() {
+            this.moves = new ArrayList<>();
+        }
+
+        public List<Move> getMoves() {
+            return this.moves;
+        }
+
+        public int size() {
+            return this.moves.size();
+        }
+
+        public void clear() {
+            this.moves.clear();
+        }
+
+        public void addMove(final Move move) {
+            this.moves.add(move);
+        }
+
+        public boolean removeMove(final Move move) {
+            return this.moves.remove(move);
+        }
+
+        public Move removeMove(final int index) {
+            return this.moves.remove(index);
+        }
+    }
+
     private static class TableGameAIWatcher implements Observer {
         @Override
         public void update(Observable o, Object arg) {
@@ -165,6 +207,12 @@ public final class Table extends Observable {
                 !Table.get().getGameBoard().getCurrentPlayer().isInStaleMate()) {
                     final AIThinkTank thinkTank = new AIThinkTank();
                     thinkTank.execute();
+            } else if (Table.get().getGameBoard().getCurrentPlayer().isInCheckMate()) {
+                JOptionPane.showMessageDialog(Table.get().gameBoard, "The winner is the " + Table.get().getGameBoard().getCurrentPlayer().getOpponent().getAlliance().toString() + " player!");
+                Table.get().clear();
+            } else if (Table.get().getGameBoard().getCurrentPlayer().isInStaleMate()) {
+                JOptionPane.showMessageDialog(Table.get().gameBoard, "The resift is DRAW!");
+                Table.get().clear();
             }
         }
     }
@@ -176,7 +224,7 @@ public final class Table extends Observable {
 
         @Override
         protected Move doInBackground() throws Exception {
-            final MoveStrategy miniMax = new MiniMax(4);
+            final MoveStrategy miniMax = new MiniMax(2);
             final Move bestMove = miniMax.execute(Table.get().getGameBoard());
             return bestMove;
         }
@@ -186,8 +234,11 @@ public final class Table extends Observable {
             try {
                 final Move bestMove = this.get();
                 Table.get().updateGameBoard(Table.get().getGameBoard().getCurrentPlayer().makeMove(bestMove).getTransitionBoard());
-                Table.get().getBoardPanel().drawBoard();
+                Table.get().moveLog.addMove(bestMove);
+                //TODO: check it
+                Table.get().takenPiecesPanel.redo(Table.get().moveLog);
                 Table.get().moveMadeUpdate(PlayerType.COMPUTER);
+                Table.get().getBoardPanel().drawBoard();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
@@ -213,7 +264,7 @@ public final class Table extends Observable {
 
         public void drawBoard() {
             this.removeAll();
-            for (final TilePanel tilePanel : Table.this.boardDirection.getTraverse(this.boardTiles)) {
+            for (final TilePanel tilePanel : Table.get().boardDirection.getTraverse(this.boardTiles)) {
                 tilePanel.drawTile();
                 this.add(tilePanel);
             }
@@ -246,12 +297,13 @@ public final class Table extends Observable {
                             }
                         } else {
                             Table.this.destinationTile = Table.this.board.getTile(TilePanel.this.tileId);
-                            final Move move = Move.MoveFactory.createMove(Table.this.board,
+                            final Move move = MoveFactory.createMove(Table.this.board,
                                                                           Table.this.sourceTile.getTileCoordinate(),
                                                                           Table.this.destinationTile.getTileCoordinate());
                             final MoveTransition moveTransition = Table.this.board.getCurrentPlayer().makeMove(move);
                             if (moveTransition.getMoveStatus() == MoveStatus.DONE) {
                                 Table.this.board = moveTransition.getTransitionBoard();
+                                Table.this.moveLog.addMove(move);
                                 Table.this.sourceTile = null;
                                 Table.this.movedPiece = null;
                                 Table.this.destinationTile = null;
@@ -265,9 +317,10 @@ public final class Table extends Observable {
                     invokeLater(new Runnable() {
                         @Override
                         public void run() {
-                            Table.this.boardPanel.drawBoard();
-                            if (Table.get().getGameSetup().isAIPlayer(Table.get().getGameBoard().getCurrentPlayer())) {
-                                Table.get().moveMadeUpdate(PlayerType.HUMAN);
+                            Table.this.getBoardPanel().drawBoard();
+                            Table.this.takenPiecesPanel.redo(moveLog);
+                            if (Table.this.getGameSetup().isAIPlayer(Table.this.getGameBoard().getCurrentPlayer())) {
+                                Table.this.moveMadeUpdate(PlayerType.HUMAN);
                             }
                         }
                     });
