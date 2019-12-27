@@ -22,8 +22,7 @@ public abstract class Player {
                 return (King)piece;
             }
         }
-        return null;
-        //throw new RuntimeException("You must not reach here! The game board is invalid!");
+        throw new RuntimeException("You must not reach here! The game board is invalid!");
     }
 
     private boolean isTileAttacked(final int tilePosition, final List<Move> opponentLegalMoves) {
@@ -76,10 +75,7 @@ public abstract class Player {
         }
         Board transitionBoard = move.execute(this.board);
         Player currentPlayer = transitionBoard.getCurrentPlayer().getOpponent();
-        //TODO: fix it
         if (currentPlayer.isTileAttacked(currentPlayer.getKing().getPiecePosition(), currentPlayer.getOpponent().getLegalMoves())) {
-            System.out.println(transitionBoard);
-            System.out.println(this.isInCheck);
             return new MoveTransition(this.board, move, MoveStatus.LEAVE_PLAYER_IN_CHECK);
         }
         return new MoveTransition(transitionBoard, move, MoveStatus.DONE);

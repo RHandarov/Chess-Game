@@ -10,7 +10,6 @@ import com.chess.game.player.MoveStatus;
 import com.chess.game.player.MoveTransition;
 import com.chess.game.player.ai.MiniMax;
 import com.chess.game.player.ai.MoveStrategy;
-import javafx.scene.control.Tab;
 import javafx.util.Pair;
 
 import javax.imageio.ImageIO;
@@ -89,6 +88,9 @@ public final class Table extends Observable {
         this.board = Board.createStandardBoard();
         this.takenPiecesPanel.clear();
         this.moveLog.clear();
+        this.sourceTile = null;
+        this.movedPiece = null;
+        this.destinationTile = null;
         this.boardPanel.drawBoard();
     }
 
@@ -140,9 +142,9 @@ public final class Table extends Observable {
         gameSetupItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Table.this.getGameSetup().promptUser();
-                Table.this.setupUpdate(Table.get().getGameSetup());
+                Table.get().getGameSetup().promptUser();
                 Table.get().clear();
+                Table.get().setupUpdate(Table.get().getGameSetup());
             }
         });
         optionsMenu.add(gameSetupItem);
@@ -211,7 +213,7 @@ public final class Table extends Observable {
                 JOptionPane.showMessageDialog(Table.get().gameBoard, "The winner is the " + Table.get().getGameBoard().getCurrentPlayer().getOpponent().getAlliance().toString() + " player!");
                 Table.get().clear();
             } else if (Table.get().getGameBoard().getCurrentPlayer().isInStaleMate()) {
-                JOptionPane.showMessageDialog(Table.get().gameBoard, "The resift is DRAW!");
+                JOptionPane.showMessageDialog(Table.get().gameBoard, "The result is DRAW!");
                 Table.get().clear();
             }
         }
@@ -235,10 +237,9 @@ public final class Table extends Observable {
                 final Move bestMove = this.get();
                 Table.get().updateGameBoard(Table.get().getGameBoard().getCurrentPlayer().makeMove(bestMove).getTransitionBoard());
                 Table.get().moveLog.addMove(bestMove);
-                //TODO: check it
                 Table.get().takenPiecesPanel.redo(Table.get().moveLog);
-                Table.get().moveMadeUpdate(PlayerType.COMPUTER);
                 Table.get().getBoardPanel().drawBoard();
+                Table.get().moveMadeUpdate(PlayerType.COMPUTER);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
@@ -285,42 +286,42 @@ public final class Table extends Observable {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (e.getButton() == MouseEvent.BUTTON1) {
-                        if (Table.this.sourceTile == null) {
-                            Table.this.destinationTile = null;
-                            Table.this.sourceTile = Table.this.board.getTile(TilePanel.this.tileId);
-                            Table.this.movedPiece = Table.this.sourceTile.getPiece();
-                            if (Table.this.movedPiece == null) {
-                                Table.this.sourceTile = null;
-                            } else if (Table.this.movedPiece.getPieceAlliance() != Table.this.board.getCurrentPlayer().getAlliance()) {
-                                Table.this.sourceTile = null;
-                                Table.this.movedPiece = null;
+                        if (Table.get().sourceTile == null) {
+                            Table.get().destinationTile = null;
+                            Table.get().sourceTile = Table.get().board.getTile(TilePanel.this.tileId);
+                            Table.get().movedPiece = Table.get().sourceTile.getPiece();
+                            if (Table.get().movedPiece == null) {
+                                Table.get().sourceTile = null;
+                            } else if (Table.get().movedPiece.getPieceAlliance() != Table.get().board.getCurrentPlayer().getAlliance()) {
+                                Table.get().sourceTile = null;
+                                Table.get().movedPiece = null;
                             }
                         } else {
-                            Table.this.destinationTile = Table.this.board.getTile(TilePanel.this.tileId);
-                            final Move move = MoveFactory.createMove(Table.this.board,
-                                                                          Table.this.sourceTile.getTileCoordinate(),
-                                                                          Table.this.destinationTile.getTileCoordinate());
-                            final MoveTransition moveTransition = Table.this.board.getCurrentPlayer().makeMove(move);
+                            Table.get().destinationTile = Table.get().board.getTile(TilePanel.this.tileId);
+                            final Move move = MoveFactory.createMove(Table.get().board,
+                                                                          Table.get().sourceTile.getTileCoordinate(),
+                                                                          Table.get().destinationTile.getTileCoordinate());
+                            final MoveTransition moveTransition = Table.get().board.getCurrentPlayer().makeMove(move);
                             if (moveTransition.getMoveStatus() == MoveStatus.DONE) {
-                                Table.this.board = moveTransition.getTransitionBoard();
-                                Table.this.moveLog.addMove(move);
-                                Table.this.sourceTile = null;
-                                Table.this.movedPiece = null;
-                                Table.this.destinationTile = null;
+                                Table.get().board = moveTransition.getTransitionBoard();
+                                Table.get().moveLog.addMove(move);
+                                Table.get().sourceTile = null;
+                                Table.get().movedPiece = null;
+                                Table.get().destinationTile = null;
                             }
                         }
                     } else if (e.getButton() == MouseEvent.BUTTON3) {
-                        Table.this.sourceTile = null;
-                        Table.this.movedPiece = null;
-                        Table.this.destinationTile = null;
+                        Table.get().sourceTile = null;
+                        Table.get().movedPiece = null;
+                        Table.get().destinationTile = null;
                     }
                     invokeLater(new Runnable() {
                         @Override
                         public void run() {
-                            Table.this.getBoardPanel().drawBoard();
-                            Table.this.takenPiecesPanel.redo(moveLog);
-                            if (Table.this.getGameSetup().isAIPlayer(Table.this.getGameBoard().getCurrentPlayer())) {
-                                Table.this.moveMadeUpdate(PlayerType.HUMAN);
+                            Table.get().getBoardPanel().drawBoard();
+                            Table.get().takenPiecesPanel.redo(moveLog);
+                            if (Table.get().getGameSetup().isAIPlayer(Table.get().getGameBoard().getCurrentPlayer())) {
+                                Table.get().moveMadeUpdate(PlayerType.HUMAN);
                             }
                         }
                     });

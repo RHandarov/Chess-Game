@@ -42,6 +42,8 @@ public class TakenPiecesPanel extends JPanel {
     public void clear() {
         this.northPanel.removeAll();
         this.southPanel.removeAll();
+        this.validate();
+        this.repaint();
     }
 
     public void redo(final MoveLog moveLog) {

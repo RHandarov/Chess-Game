@@ -46,9 +46,12 @@ public final class Pawn extends Piece {
             } else if (i == 1 && this.isFirstMove) {
                 final int pieceRowCandidate = pieceRowAndColumnCoordinates.getKey() + (ROW_OFFSETS[i] * this.getPieceAlliance().getDirection());
                 final int pieceColumnCandidate = pieceRowAndColumnCoordinates.getValue() + COLUMN_OFFSETS[i];
+                final int pieceRowToCheck = pieceRowAndColumnCoordinates.getKey() + (ROW_OFFSETS[0] * this.getPieceAlliance().getDirection());
+                final int pieceColumnToCheck = pieceRowAndColumnCoordinates.getValue() + COLUMN_OFFSETS[0];
                 if (BoardUtils.isValidTile(new Pair<Integer, Integer>(pieceRowCandidate, pieceColumnCandidate))) {
                     final int pieceCoordinateCandidate = BoardUtils.getPieceCoordinate(new Pair<Integer, Integer>(pieceRowCandidate, pieceColumnCandidate));
-                    if (!board.getTile(pieceCoordinateCandidate).isTileOccupied()) {
+                    final int pieceCoordinateToCheck = BoardUtils.getPieceCoordinate(new Pair<Integer, Integer>(pieceRowToCheck, pieceColumnToCheck));
+                    if (!board.getTile(pieceCoordinateCandidate).isTileOccupied() && !board.getTile(pieceCoordinateToCheck).isTileOccupied()) {
                         legalMoves.add(new PawnJump(pieceCoordinateCandidate, this));
                     }
                 }
@@ -56,7 +59,6 @@ public final class Pawn extends Piece {
                 final int pieceRowCandidate = pieceRowAndColumnCoordinates.getKey() + (ROW_OFFSETS[i] * this.getPieceAlliance().getDirection());
                 final int pieceColumnCandidate = pieceRowAndColumnCoordinates.getValue() + (COLUMN_OFFSETS[i] * this.getPieceAlliance().getDirection());
                 if (BoardUtils.isValidTile(new Pair<Integer, Integer>(pieceRowCandidate, pieceColumnCandidate))) {
-                    Pawn testPawn = board.getEnPassantPawn();
                     final int pieceCoordinateCandidate = BoardUtils.getPieceCoordinate(new Pair<Integer, Integer>(pieceRowCandidate, pieceColumnCandidate));
                     if (board.getTile(pieceCoordinateCandidate).isTileOccupied()) {
                         Piece attackingPiece = board.getTile(pieceCoordinateCandidate).getPiece();
