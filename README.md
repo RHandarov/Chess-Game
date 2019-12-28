@@ -9,7 +9,7 @@ This is a simple classical chess game implemented in Java. It has a GUI and supp
  - It has an option to reset the game
  
 ## Instructions
-If you want to select a figure, you should click the left button of mouse onto it first and than choose an empty cell in order to move it. Otherwise you should click the right button of mouse onto it again if you selected it.
+If you want to select a figure, you should click the left button of mouse onto it first and than choose an empty cell in order to move it. Otherwise you should click the right button of mouse onto it again if you have selected it earlier.
 
 ## Dependences
  - Java 8
