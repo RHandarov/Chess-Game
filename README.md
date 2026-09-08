@@ -13,5 +13,3 @@ If you want to select a figure, you should click the left button of mouse onto i
 
 ## Dependences
  - Java 8
- 
- As a first project, I think it is a good game.
